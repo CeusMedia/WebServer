@@ -24,7 +24,7 @@
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			http://code.google.com/p/cmmodules/
  *	@since			???
- *	@version		$Id: Connection.php5 611 2010-03-25 00:48:23Z christian.wuerker $
+ *	@version		$Id$
  */
 /**
  *	@category		???
@@ -34,7 +34,7 @@
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			http://code.google.com/p/cmmodules/
  *	@since			???
- *	@version		$Id: Connection.php5 611 2010-03-25 00:48:23Z christian.wuerker $
+ *	@version		$Id$
  *	@deprecated		use Console_Fork_Abstract instead
  */
 abstract class ForkFactory {
