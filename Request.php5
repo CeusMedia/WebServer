@@ -1,0 +1,147 @@
+<?php
+/**
+ *	HTTP Request.
+ *
+ *	Copyright (c) 2010 Christian Würker (ceus-media.de)
+ *
+ *	This program is free software: you can redistribute it and/or modify
+ *	it under the terms of the GNU General Public License as published by
+ *	the Free Software Foundation, either version 3 of the License, or
+ *	(at your option) any later version.
+ *
+ *	This program is distributed in the hope that it will be useful,
+ *	but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *	GNU General Public License for more details.
+ *
+ *	You should have received a copy of the GNU General Public License
+ *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *	@category		cmModules
+ *	@package		PAWS
+ *	@author			Christian Würker <christian.wuerker@ceus-media.de>
+ *	@copyright		2010 Christian Würker
+ *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
+ *	@link			http://code.google.com/p/cmmodules/
+ *	@since			???
+ *	@version		$Id$
+ */
+/**
+ *	HTTP Request.
+ *	@category		cmModules
+ *	@package		PAWS
+ *	@author			Christian Würker <christian.wuerker@ceus-media.de>
+ *	@copyright		2010 Christian Würker
+ *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
+ *	@link			http://code.google.com/p/cmmodules/
+ *	@since			???
+ *	@version		$Id$
+ */
+class PAWS_Request {
+
+	protected $body		= NULL;
+	protected $config	= array();
+	protected $headers	= array();
+	protected $method	= NULL;
+	protected $methods	= array();
+	protected $parts	= array();
+	protected $protocol	= NULL;
+	protected $url		= NULL;
+
+	public function __construct($config) {
+		$this->config	= $config;
+		$this->methods	= explode(',',$this->config['methods']);
+	}
+
+	public function addHeader(PAWS_Header $header) {
+		array_push($this->headers, $header);
+	}
+
+	public function fromString($string) {
+		$lines	= explode("\n", $string);
+		$first	= array_shift($lines);
+		$parts	= explode(' ',$first);
+		if(count($parts) != 3)
+			throw new PAWS_Exception('Invalid HTTP header', 400);
+
+		$method		= strtoupper(array_shift($parts));
+		if(!in_array($method, $this->methods))
+			throw new PAWS_Exception('Method "'.$method.'" is not available', 405);
+		$this->setMethod($method);
+
+		$url		= trim(urldecode(array_shift($parts)));
+		if(strlen($url) > $this->config['limit.url'])
+			throw new PAWS_Exception('The URL is to long', 414);
+		$this->setUrl($url);
+
+		$this->setProtocol(array_shift($parts));
+
+		$boundary	= NULL;
+		while(NULL !== ($line = trim(array_shift($lines)))) {
+			if(empty($line))
+				break;
+			$this->addHeader(new PAWS_Header($line));
+/*			if(!$boundary){
+				$header		= $request->getHeaderByKey('Content-type');
+				if($header) {
+					$parts	= $header->getValue();
+					print_m($parts);
+					if(array_key_exists('boundary', $parts))
+						$boundary	= $parts['boundary'];
+				}
+			}
+#			if($boundary)
+#			{
+*/		}
+		$this->setBody(join("\n",$lines));
+	}
+
+	public function getBody() {
+		return $this->body;
+	}
+
+	public function getHeaderByKey($key) {
+		$key	= strtolower($key);
+		foreach($this->headers as $header)
+			if(strtolower($header->getKey()) == $key)
+				return $header;
+		return NULL;
+	}
+
+	public function getHeaders() {
+		return $this->headers;
+	}
+
+	public function getMethod() {
+		return $this->method;
+	}
+
+	public function getParts() {
+		return $this->parts;
+	}
+
+	public function getProtocol() {
+		return $this->protocol;
+	}
+
+	public function getUrl() {
+		return $this->url;
+	}
+
+	public function setBody($body) {
+		$this->body	= $body;
+	}
+
+	public function setMethod($method) {
+		$this->method	= $method;
+	}
+
+	public function setProtocol($protocol) {
+		$this->protocol	= $protocol;
+	}
+
+	public function setUrl($url) {
+		$this->url	= $url;
+	}
+}
+?>
