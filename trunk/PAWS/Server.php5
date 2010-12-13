@@ -37,7 +37,7 @@
  *	@since			???
  *	@version		$Id$
  */
-class PAWS_Server extends Console_Fork_Abstract {
+class CMM_PAWS_Server extends Console_Fork_Abstract {
 
 	protected $config	= array();
 	protected $socket	= NULL;
@@ -54,7 +54,7 @@ class PAWS_Server extends Console_Fork_Abstract {
 		ini_set("max_execution_time", "0");
 		ini_set("max_input_time", "0");
 		set_time_limit(0);
-#		$this->parser	= new PAWS_Request_Parser($this->config);
+#		$this->parser	= new CMM_PAWS_Request_Parser($this->config);
 		echo 'Server is running...'."\n";
 		$this->main();
 	}
@@ -70,10 +70,10 @@ class PAWS_Server extends Console_Fork_Abstract {
 
 	protected function handleRequest($string) {
 #		$request	= $this->parser->parse($string);
-		$request	= new PAWS_Request($this->config);
+		$request	= new CMM_PAWS_Request($this->config);
 		$request->fromString($string);
-		$response	= new PAWS_Response();
-		$handler	= new PAWS_Method_Dispatcher($this->config);
+		$response	= new CMM_PAWS_Response();
+		$handler	= new CMM_PAWS_Method_Dispatcher($this->config);
 		$handler->dispatch($request, $response);
 		return $response->toString();
 	}
@@ -85,8 +85,8 @@ class PAWS_Server extends Console_Fork_Abstract {
 		if(!is_resource($connection))
 			return;
 		$msg = $error['message'].' in '.$error['file']. ' in line '.$error['line'];
-		$exception	= new PAWS_Exception($msg, 500);
-		$handler	= new PAWS_Exception_Handler($this->config);
+		$exception	= new CMM_PAWS_Exception($msg, 500);
+		$handler	= new CMM_PAWS_Exception_Handler($this->config);
 		$response	= $handler->handle($exception);
 		@fwrite($connection, $response);
 		@fclose($connection);
@@ -117,8 +117,8 @@ class PAWS_Server extends Console_Fork_Abstract {
 				register_shutdown_function($callback, $connection);
 				$response	= $this->handleRequest($request);
 			}
-			catch(PAWS_Exception $exception) {
-				$handler	= new PAWS_Exception_Handler($this->config);
+			catch(CMM_PAWS_Exception $exception) {
+				$handler	= new CMM_PAWS_Exception_Handler($this->config);
 				$response	= $handler->handle($exception);
 			}
 		}

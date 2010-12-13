@@ -37,7 +37,7 @@
  *	@since			???
  *	@version		$Id$
  */
-class PAWS_Request {
+class CMM_PAWS_Request {
 
 	protected $body		= NULL;
 	protected $config	= array();
@@ -53,7 +53,7 @@ class PAWS_Request {
 		$this->methods	= explode(',',$this->config['methods']);
 	}
 
-	public function addHeader(PAWS_Header $header) {
+	public function addHeader(CMM_PAWS_Header $header) {
 		array_push($this->headers, $header);
 	}
 
@@ -62,16 +62,16 @@ class PAWS_Request {
 		$first	= array_shift($lines);
 		$parts	= explode(' ',$first);
 		if(count($parts) != 3)
-			throw new PAWS_Exception('Invalid HTTP header', 400);
+			throw new CMM_PAWS_Exception('Invalid HTTP header', 400);
 
 		$method		= strtoupper(array_shift($parts));
 		if(!in_array($method, $this->methods))
-			throw new PAWS_Exception('Method "'.$method.'" is not available', 405);
+			throw new CMM_PAWS_Exception('Method "'.$method.'" is not available', 405);
 		$this->setMethod($method);
 
 		$url		= trim(urldecode(array_shift($parts)));
 		if(strlen($url) > $this->config['limit.url'])
-			throw new PAWS_Exception('The URL is to long', 414);
+			throw new CMM_PAWS_Exception('The URL is to long', 414);
 		$this->setUrl($url);
 
 		$this->setProtocol(array_shift($parts));
@@ -80,7 +80,7 @@ class PAWS_Request {
 		while(NULL !== ($line = trim(array_shift($lines)))) {
 			if(empty($line))
 				break;
-			$this->addHeader(new PAWS_Header($line));
+			$this->addHeader(new CMM_PAWS_Header($line));
 /*			if(!$boundary){
 				$header		= $request->getHeaderByKey('Content-type');
 				if($header) {

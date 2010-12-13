@@ -37,14 +37,14 @@
  *	@since			???
  *	@version		$Id$
  */
-class PAWS_Response {
+class CMM_PAWS_Response {
 
 	protected $body		= NULL;
 	protected $headers	= array();
 	protected $protocol	= 'HTTP/1.0';
 	protected $status	= "200 OK";
 
-	public function addHeader(PAWS_Header $header) {
+	public function addHeader(CMM_PAWS_Header $header) {
 		array_push($this->headers, $header);
 	}
 
@@ -52,9 +52,9 @@ class PAWS_Response {
 		if($status) {
 			$this->setStatus($status);
 		}
-		$this->addHeader(new PAWS_Header('Server', 'PAWS/0.1'));
-		$this->addHeader(new PAWS_Header('Date', date('r')));
-		$this->addHeader(new PAWS_Header('Accept-Range', 'bytes'));
+		$this->addHeader(new CMM_PAWS_Header('Server', 'PAWS/0.1'));
+		$this->addHeader(new CMM_PAWS_Header('Date', date('r')));
+		$this->addHeader(new CMM_PAWS_Header('Accept-Range', 'bytes'));
 	}
 
 	public function getHeaders() {
@@ -63,7 +63,7 @@ class PAWS_Response {
 
 	public function setBody($body) {
 		$this->body	= $body;
-		$header		= new PAWS_Header('Content-length', strlen($body));
+		$header		= new CMM_PAWS_Header('Content-length', strlen($body));
 		$this->addHeader($header);
 	}
 

@@ -30,7 +30,7 @@
  *	Handler for HTTP Method POST.
  *	@category		cmModules
  *	@package		PAWS.Method
- *	@extends		PAWS_Method_Get
+ *	@extends		CMM_PAWS_Method_Get
  *	@author			Christian Würker <christian.wuerker@ceus-media.de>
  *	@copyright		2010 Christian Würker
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
@@ -38,7 +38,7 @@
  *	@since			???
  *	@version		$Id$
  */
-class PAWS_Method_Post extends PAWS_Method_Get {
+class CMM_PAWS_Method_Post extends CMM_PAWS_Method_Get {
 
 	protected $name		= 'POST';
 
@@ -55,7 +55,7 @@ class PAWS_Method_Post extends PAWS_Method_Get {
 		return $output;
 	}
 
-	protected function setPost(PAWS_Request $request) {
+	protected function setPost(CMM_PAWS_Request $request) {
 		$parts	= $request->getParts();
 		if($parts) {
 			foreach($parts as $part) {

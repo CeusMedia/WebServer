@@ -37,7 +37,7 @@
  *	@since			???
  *	@version		$Id$
  */
-class PAWS_ServerDaemon
+class CMM_PAWS_ServerDaemon
 {
 	public function __construct()
 	{
@@ -45,7 +45,7 @@ class PAWS_ServerDaemon
 		if($pid == -1)
 			throw new RuntimeException('Could not fork');
 		if(!$pid)
-			new PAWS_Server;
+			new CMM_PAWS_Server;
 	}
 }
 ?>

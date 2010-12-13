@@ -37,7 +37,7 @@
  *	@since			???
  *	@version		$Id$
  */
-abstract class PAWS_Method_Abstract extends Console_Fork_Abstract{
+abstract class CMM_PAWS_Method_Abstract extends Console_Fork_Abstract{
 
 	protected $name	= 'UNKNOWN';
 
@@ -47,9 +47,9 @@ abstract class PAWS_Method_Abstract extends Console_Fork_Abstract{
 		$this->mimeTypes	= parse_ini_file($config['mime.file']);
 	}
 
-	abstract public function handle(PAWS_Request $request, PAWS_Response $response);
+	abstract public function handle(CMM_PAWS_Request $request, CMM_PAWS_Response $response);
 
-	protected function logRequest(PAWS_Request $request) {
+	protected function logRequest(CMM_PAWS_Request $request) {
 		$message	= time().' '.$this->name.' '.$request->getUrl()."\n";
 		$fileLog	= $this->config['log.access'];
 		if(!is_writable(dirname($fileLog)))
@@ -57,7 +57,7 @@ abstract class PAWS_Method_Abstract extends Console_Fork_Abstract{
 		error_log($message, 3, $fileLog);
 	}
 
-	protected function negotiatePath(PAWS_Request $request) {
+	protected function negotiatePath(CMM_PAWS_Request $request) {
 		$root		= $this->config['docroot'];
 		$indices	= explode(',', $this->config['index']);
 		$path		= parse_url($request->getUrl(), PHP_URL_PATH);
@@ -71,7 +71,7 @@ abstract class PAWS_Method_Abstract extends Console_Fork_Abstract{
 		}
 		if(file_exists($root.$path))
 			return $root.$path;
-		throw new PAWS_Exception('No resource found for URL "'.$path.'"', 404);
+		throw new CMM_PAWS_Exception('No resource found for URL "'.$path.'"', 404);
 	}
 
 	protected function setGet($request) {
