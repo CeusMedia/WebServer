@@ -37,6 +37,6 @@
  *	@since			???
  *	@version		$Id$
  */
-class PAWS_Exception extends Exception {
+class CMM_PAWS_Exception extends Exception {
 }
 ?>

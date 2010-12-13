@@ -37,21 +37,21 @@
  *	@since			???
  *	@version		$Id$
  */
-class PAWS_Exception_Handler {
+class CMM_PAWS_Exception_Handler {
 
 	public function __construct($config) {
 		$this->config	 = $config;
 	}
 
-	public function handle(PAWS_Exception $e) {
+	public function handle(CMM_PAWS_Exception $e) {
 		$path		= $this->config['errorpages'];
 		$code		= $e->getCode();
 		$message	= $e->getMessage();
-		$response	= new PAWS_Response($e->getCode());
+		$response	= new CMM_PAWS_Response($e->getCode());
 
 		switch($e->getCode()) {
 			case 405:
-				$header	= new PAWS_Header('Allow', $this->config['methods']);
+				$header	= new CMM_PAWS_Header('Allow', $this->config['methods']);
 				$response->addHeader($header);
 				break;
 		}

@@ -30,7 +30,7 @@
  *	Handler for HTTP Method GET.
  *	@category		cmModules
  *	@package		PAWS.Method
- *	@extends		PAWS_Method_Abstract
+ *	@extends		CMM_PAWS_Method_Abstract
  *	@author			Christian Würker <christian.wuerker@ceus-media.de>
  *	@copyright		2010 Christian Würker
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
@@ -38,18 +38,18 @@
  *	@since			???
  *	@version		$Id$
  */
-class PAWS_Method_Get extends PAWS_Method_Abstract {
+class CMM_PAWS_Method_Get extends CMM_PAWS_Method_Abstract {
 
 	protected $name		= 'GET';
 
 	/**
 	 *	Handles Request.
 	 *	@access		public
-	 *	@param		PAWS_Request		$request		HTTP Request Object
-	 *	@param		PAWS_Response	$response		HTTP Response Object
+	 *	@param		CMM_PAWS_Request		$request		HTTP Request Object
+	 *	@param		CMM_PAWS_Response	$response		HTTP Response Object
 	 *	@return <type>
 	 */
-	public function handle(PAWS_Request $request, PAWS_Response $response) {
+	public function handle(CMM_PAWS_Request $request, CMM_PAWS_Response $response) {
 		$this->logRequest($request);
 		$pathName	= $this->negotiatePath($request);
 		$fileName	= pathinfo($pathName, PATHINFO_BASENAME);
@@ -78,9 +78,9 @@ class PAWS_Method_Get extends PAWS_Method_Abstract {
 	 *	Runs a PHP Script in forked Process.
 	 *	@access		public
 	 *	@param		string			$pathName		Working Path
-	 *	@param		PAWS_Request	$request		HTTP Request Object
+	 *	@param		CMM_PAWS_Request	$request		HTTP Request Object
 	 *	@return		string			Generated Content
-	 *	@throws		PAWS_Exception if PHP throws uncatched Exception
+	 *	@throws		CMM_PAWS_Exception if PHP throws uncatched Exception
 	 */
 	protected function runPhpFile($pathName, $request) {
 		try {
@@ -91,7 +91,7 @@ class PAWS_Method_Get extends PAWS_Method_Abstract {
 			$msg	= $e->getMessage();
 			$file	= $e->getFile();
 			$line	= $e->getLine();
-			throw new PAWS_Exception($msg.' in '.$file.' in line '.$line, 500);
+			throw new CMM_PAWS_Exception($msg.' in '.$file.' in line '.$line, 500);
 		}
 	}
 }

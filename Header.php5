@@ -37,7 +37,7 @@
  *	@since			???
  *	@version		$Id$
  */
-class PAWS_Header {
+class CMM_PAWS_Header {
 	
 	protected $key;
 	protected $value;

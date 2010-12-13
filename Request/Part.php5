@@ -37,7 +37,7 @@
  *	@since			???
  *	@version		$Id$
  */
-class PAWS_Request_Part {
+class CMM_PAWS_Request_Part {
 
 	protected $content	= NULL;
 	protected $headers	= array();
@@ -45,7 +45,7 @@ class PAWS_Request_Part {
 	public function __construct($lines) {
 		while(NULL !== ($line = array_shift($lines))) {
 			if(trim($line))
-				$this->headers[]	= new PAWS_Header($line);
+				$this->headers[]	= new CMM_PAWS_Header($line);
 			else {
 				$this->content	= implode("\n", $lines);
 				break;
