@@ -98,6 +98,7 @@ class CMM_PAWS_Server extends Console_Fork_Abstract {
 			$connection	= @stream_socket_accept($socket);
 			if($connection){
 				$request	= @fread($connection, 65535);
+echo array_shift( explode( "\r\n", $request ) )."\n";
 				if($request) {
 					if($this->osIsWin)
 						$this->runInChild(array($connection, $request));
