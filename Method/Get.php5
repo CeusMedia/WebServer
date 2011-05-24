@@ -53,6 +53,7 @@ class CMM_PAWS_Method_Get extends CMM_PAWS_Method_Abstract {
 		$this->logRequest($request);
 		$pathName	= $this->negotiatePath($request);
 		$fileName	= pathinfo($pathName, PATHINFO_BASENAME);
+		echo "file: ".$fileName."\n";
 		$extension	= pathinfo($pathName, PATHINFO_EXTENSION);
 #		if(array_key_exists($extension, $this->mimeTypes))
 #			$response->addHeader('Content-type', $this->mimeTypes[$extension]);
