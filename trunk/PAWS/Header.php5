@@ -43,8 +43,7 @@ class CMM_PAWS_Header {
 	protected $value;
 
 	public function __construct($key, $value = NULL) {
-		if(NULL !== $value)
-		{
+		if(NULL !== $value) {
 			$this->setKey($key);
 			$this->setValue($value);
 		}
