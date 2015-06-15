@@ -2,7 +2,7 @@
 /**
  *	Method Handler Abstraction.
  *
- *	Copyright (c) 2010 Christian Würker (ceus-media.de)
+ *	Copyright (c) 2010-2015 Christian Würker (ceusmedia.de)
  *
  *	This program is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -17,27 +17,24 @@
  *	You should have received a copy of the GNU General Public License
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *	@category		cmModules
- *	@package		PAWS.Method
+ *	@category		Library
+ *	@package		CeusMedia_WebServer
  *	@author			Christian Würker <christian.wuerker@ceus-media.de>
- *	@copyright		2010 Christian Würker
+ *	@copyright		2010-2015 Christian Würker
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
- *	@link			http://code.google.com/p/cmmodules/
- *	@since			???
- *	@version		$Id$
+ *	@link			https://github.com/CeusMedia/WebServer
  */
+namespace CeusMedia\WebServer;
 /**
  *	Method Handler Abstraction.
- *	@category		cmModules
- *	@package		PAWS.Method
+ *	@category		Library
+ *	@package		CeusMedia_WebServer
  *	@author			Christian Würker <christian.wuerker@ceus-media.de>
- *	@copyright		2010 Christian Würker
+ *	@copyright		2010-2015 Christian Würker
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
- *	@link			http://code.google.com/p/cmmodules/
- *	@since			???
- *	@version		$Id$
+ *	@link			https://github.com/CeusMedia/WebServer
  */
-abstract class CMM_PAWS_Method_Abstract extends Console_Fork_Abstract{
+abstract class MethodAbstract extends \Console_Fork_Abstract{
 
 	protected $name	= 'UNKNOWN';
 
@@ -47,17 +44,17 @@ abstract class CMM_PAWS_Method_Abstract extends Console_Fork_Abstract{
 		$this->mimeTypes	= parse_ini_file($config['mime.file']);
 	}
 
-	abstract public function handle(CMM_PAWS_Request $request, CMM_PAWS_Response $response);
+	abstract public function handle(\CeusMedia\WebServer\Request $request, \CeusMedia\WebServer\Response $response);
 
-	protected function logRequest(CMM_PAWS_Request $request) {
+	protected function logRequest(\CeusMedia\WebServer\Request $request) {
 		$message	= time().' '.$this->name.' '.$request->getUrl()."\n";
 		$fileLog	= $this->config['log.access'];
 		if(!is_writable(dirname($fileLog)))
-			throw new RuntimeException('Log file "'.$fileLog.'" is not writable' );
+			throw new \RuntimeException('Log file "'.$fileLog.'" is not writable' );
 		error_log($message, 3, $fileLog);
 	}
 
-	protected function negotiatePath(CMM_PAWS_Request $request) {
+	protected function negotiatePath(\CeusMedia\WebServer\Request $request) {
 		$root		= $this->config['docroot'];
 		$indices	= explode(',', $this->config['index']);
 		$path		= parse_url($request->getUrl(), PHP_URL_PATH);
@@ -71,7 +68,7 @@ abstract class CMM_PAWS_Method_Abstract extends Console_Fork_Abstract{
 		}
 		if(file_exists($root.$path))
 			return $root.$path;
-		throw new CMM_PAWS_Exception('No resource found for URL "'.$path.'"', 404);
+		throw new \CeusMedia\WebServer\Exception('No resource found for URL "'.$path.'"', 404);
 	}
 
 	protected function setGet($request) {

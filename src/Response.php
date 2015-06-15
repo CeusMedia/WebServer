@@ -2,7 +2,7 @@
 /**
  *	HTTP Response.
  *
- *	Copyright (c) 2010 Christian Würker (ceus-media.de)
+ *	Copyright (c) 2010-2015 Christian Würker (ceusmedia.de)
  *
  *	This program is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -17,34 +17,31 @@
  *	You should have received a copy of the GNU General Public License
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *	@category		cmModules
- *	@package		PAWS
+ *	@category		Library
+ *	@package		CeusMedia_WebServer
  *	@author			Christian Würker <christian.wuerker@ceus-media.de>
- *	@copyright		2010 Christian Würker
+ *	@copyright		2010-2015 Christian Würker
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
- *	@link			http://code.google.com/p/cmmodules/
- *	@since			???
- *	@version		$Id$
+ *	@link			https://github.com/CeusMedia/WebServer
  */
+namespace CeusMedia\WebServer;
 /**
  *	HTTP Response.
- *	@category		cmModules
- *	@package		PAWS
+ *	@category		Library
+ *	@package		CeusMedia_WebServer
  *	@author			Christian Würker <christian.wuerker@ceus-media.de>
- *	@copyright		2010 Christian Würker
+ *	@copyright		2010-2015 Christian Würker
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
- *	@link			http://code.google.com/p/cmmodules/
- *	@since			???
- *	@version		$Id$
+ *	@link			https://github.com/CeusMedia/WebServer
  */
-class CMM_PAWS_Response {
+class Response {
 
 	protected $body		= NULL;
 	protected $headers	= array();
 	protected $protocol	= 'HTTP/1.0';
 	protected $status	= "200 OK";
 
-	public function addHeader(CMM_PAWS_Header $header) {
+	public function addHeader(\CeusMedia\WebServer\Header $header) {
 		array_push($this->headers, $header);
 	}
 
@@ -52,9 +49,9 @@ class CMM_PAWS_Response {
 		if($status) {
 			$this->setStatus($status);
 		}
-		$this->addHeader(new CMM_PAWS_Header('Server', 'PAWS/0.1'));
-		$this->addHeader(new CMM_PAWS_Header('Date', date('r')));
-		$this->addHeader(new CMM_PAWS_Header('Accept-Range', 'bytes'));
+		$this->addHeader(new \CeusMedia\WebServer\Header('Server', 'PAWS/0.1'));
+		$this->addHeader(new \CeusMedia\WebServer\Header('Date', date('r')));
+		$this->addHeader(new \CeusMedia\WebServer\Header('Accept-Range', 'bytes'));
 	}
 
 	public function getHeaders() {
@@ -63,7 +60,7 @@ class CMM_PAWS_Response {
 
 	public function setBody($body) {
 		$this->body	= $body;
-		$header		= new CMM_PAWS_Header('Content-length', strlen($body));
+		$header		= new \CeusMedia\WebServer\Header('Content-length', strlen($body));
 		$this->addHeader($header);
 	}
 

@@ -2,7 +2,7 @@
 /**
  *	Part in HTTP Request or Response (for multipart and redirecting support).
  *
- *	Copyright (c) 2010 Christian Würker (ceus-media.de)
+ *	Copyright (c) 2010-2015 Christian Würker (ceusmedia.de)
  *
  *	This program is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -17,27 +17,24 @@
  *	You should have received a copy of the GNU General Public License
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *	@category		cmModules
- *	@package		PAWS.Request
+ *	@category		Library
+ *	@package		CeusMedia_WebServer_Request
  *	@author			Christian Würker <christian.wuerker@ceus-media.de>
- *	@copyright		2010 Christian Würker
+ *	@copyright		2010-2015 Christian Würker
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
- *	@link			http://code.google.com/p/cmmodules/
- *	@since			???
- *	@version		$Id$
+ *	@link			https://github.com/CeusMedia/WebServer
  */
+namespace CeusMedia\WebServer\Request;
 /**
  *	Part in HTTP Request or Response (for multipart and redirecting support).
- *	@category		cmModules
- *	@package		PAWS.Request
+ *	@category		Library
+ *	@package		CeusMedia_WebServer_Request
  *	@author			Christian Würker <christian.wuerker@ceus-media.de>
- *	@copyright		2010 Christian Würker
+ *	@copyright		2010-2015 Christian Würker
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
- *	@link			http://code.google.com/p/cmmodules/
- *	@since			???
- *	@version		$Id$
+ *	@link			https://github.com/CeusMedia/WebServer
  */
-class CMM_PAWS_Request_Part {
+class Part {
 
 	protected $content	= NULL;
 	protected $headers	= array();
@@ -45,7 +42,7 @@ class CMM_PAWS_Request_Part {
 	public function __construct($lines) {
 		while(NULL !== ($line = array_shift($lines))) {
 			if(trim($line))
-				$this->headers[]	= new CMM_PAWS_Header($line);
+				$this->headers[]	= new \CeusMedia\WebServer\Header($line);
 			else {
 				$this->content	= implode("\n", $lines);
 				break;

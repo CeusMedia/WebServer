@@ -2,7 +2,7 @@
 /**
  *	HTTP Request.
  *
- *	Copyright (c) 2010 Christian Würker (ceus-media.de)
+ *	Copyright (c) 2010-2015 Christian Würker (ceusmedia.de)
  *
  *	This program is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -17,27 +17,24 @@
  *	You should have received a copy of the GNU General Public License
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *	@category		cmModules
- *	@package		PAWS
+ *	@category		Library
+ *	@package		CeusMedia_WebServer
  *	@author			Christian Würker <christian.wuerker@ceus-media.de>
- *	@copyright		2010 Christian Würker
+ *	@copyright		2010-2015 Christian Würker
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
- *	@link			http://code.google.com/p/cmmodules/
- *	@since			???
- *	@version		$Id$
+ *	@link			https://github.com/CeusMedia/WebServer
  */
+namespace CeusMedia\WebServer;
 /**
  *	HTTP Request.
- *	@category		cmModules
- *	@package		PAWS
+ *	@category		Library
+ *	@package		CeusMedia_WebServer
  *	@author			Christian Würker <christian.wuerker@ceus-media.de>
- *	@copyright		2010 Christian Würker
+ *	@copyright		2010-2015 Christian Würker
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
- *	@link			http://code.google.com/p/cmmodules/
- *	@since			???
- *	@version		$Id$
+ *	@link			https://github.com/CeusMedia/WebServer
  */
-class CMM_PAWS_Request {
+class Request {
 
 	protected $body		= NULL;
 	protected $config	= array();
@@ -53,7 +50,7 @@ class CMM_PAWS_Request {
 		$this->methods	= explode(',',$this->config['methods']);
 	}
 
-	public function addHeader(CMM_PAWS_Header $header) {
+	public function addHeader(\CeusMedia\WebServer\Header $header) {
 		array_push($this->headers, $header);
 	}
 
@@ -62,16 +59,16 @@ class CMM_PAWS_Request {
 		$first	= array_shift($lines);
 		$parts	= explode(' ',$first);
 		if(count($parts) != 3)
-			throw new CMM_PAWS_Exception('Invalid HTTP header', 400);
+			throw new \CeusMedia\WebServer\Exception('Invalid HTTP header', 400);
 
 		$method		= strtoupper(array_shift($parts));
 		if(!in_array($method, $this->methods))
-			throw new CMM_PAWS_Exception('Method "'.$method.'" is not available', 405);
+			throw new \CeusMedia\WebServer\Exception('Method "'.$method.'" is not available', 405);
 		$this->setMethod($method);
 
 		$url		= trim(urldecode(array_shift($parts)));
 		if(strlen($url) > $this->config['limit.url'])
-			throw new CMM_PAWS_Exception('The URL is to long', 414);
+			throw new \CeusMedia\WebServer\Exception('The URL is to long', 414);
 		$this->setUrl($url);
 
 		$this->setProtocol(array_shift($parts));
@@ -80,7 +77,7 @@ class CMM_PAWS_Request {
 		while(NULL !== ($line = trim(array_shift($lines)))) {
 			if(empty($line))
 				break;
-			$this->addHeader(new CMM_PAWS_Header($line));
+			$this->addHeader(new \CeusMedia\WebServer\Header($line));
 /*			if(!$boundary){
 				$header		= $request->getHeaderByKey('Content-type');
 				if($header) {

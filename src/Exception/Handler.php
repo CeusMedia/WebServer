@@ -2,7 +2,7 @@
 /**
  *	Handler for Exceptions thrown while handling Request.
  *
- *	Copyright (c) 2010 Christian Würker (ceus-media.de)
+ *	Copyright (c) 2010-2015 Christian Würker (ceusmedia.de)
  *
  *	This program is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -17,55 +17,52 @@
  *	You should have received a copy of the GNU General Public License
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *	@category		cmModules
- *	@package		PAWS.Exception
+ *	@category		Library
+ *	@package		CeusMedia_WebServer_Exception
  *	@author			Christian Würker <christian.wuerker@ceus-media.de>
- *	@copyright		2010 Christian Würker
+ *	@copyright		2010-2015 Christian Würker
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
- *	@link			http://code.google.com/p/cmmodules/
- *	@since			???
- *	@version		$Id$
+ *	@link			https://github.com/CeusMedia/WebServer
  */
+namespace CeusMedia\WebServer\Exception;
 /**
  *	Handler for Exceptions thrown while handling Request.
- *	@category		cmModules
- *	@package		PAWS.Exception
+ *	@category		Library
+ *	@package		CeusMedia_WebServer_Exception
  *	@author			Christian Würker <christian.wuerker@ceus-media.de>
- *	@copyright		2010 Christian Würker
+ *	@copyright		2010-2015 Christian Würker
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
- *	@link			http://code.google.com/p/cmmodules/
- *	@since			???
- *	@version		$Id$
+ *	@link			https://github.com/CeusMedia/WebServer
  */
-class CMM_PAWS_Exception_Handler {
+class Handler {
 
 	public function __construct($config) {
 		$this->config	 = $config;
 	}
 
-	public function handle(CMM_PAWS_Exception $e) {
+	public function handle(\CeusMedia\WebServer\Exception $e) {
 		$path		= $this->config['errorpages'];
 		$code		= $e->getCode();
 		$message	= $e->getMessage();
-		$response	= new CMM_PAWS_Response($e->getCode());
+		$response	= new \CeusMedia\WebServer\Response($e->getCode());
 
 		switch($e->getCode()) {
 			case 405:
-				$header	= new CMM_PAWS_Header('Allow', $this->config['methods']);
+				$header	= new \CeusMedia\WebServer\Header('Allow', $this->config['methods']);
 				$response->addHeader($header);
 				break;
 		}
 
 		$pathName	= $path.$code.".html";
 		if(!file_exists($pathName))
-			throw new RuntimeException('Page for HTTP error "'.$code.'" not found');
+			throw new \RuntimeException('Page for HTTP error "'.$code.'" not found');
 		$data	= array(
 			'type'		=> get_class($e),
 			'message'	=> nl2br($e->getMessage()),
 			'code'		=> $e->getCode(),
 			'date'		=> date('c'),
 		);
-		$body	= UI_Template::render($pathName, $data);
+		$body	= \UI_Template::render($pathName, $data);
 		$response->setBody($body);
 		return $response->toString();
 	}

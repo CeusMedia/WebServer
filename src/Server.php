@@ -2,7 +2,7 @@
 /**
  *	HTTP Server.
  *
- *	Copyright (c) 2010 Christian Würker (ceus-media.de)
+ *	Copyright (c) 2010-2015 Christian Würker (ceusmedia.de)
  *
  *	This program is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -17,27 +17,24 @@
  *	You should have received a copy of the GNU General Public License
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *	@category		cmModules
- *	@package		PAWS
+ *	@category		Library
+ *	@package		CeusMedia_WebServer
  *	@author			Christian Würker <christian.wuerker@ceus-media.de>
- *	@copyright		2010 Christian Würker
+ *	@copyright		2010-2015 Christian Würker
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
- *	@link			http://code.google.com/p/cmmodules/
- *	@since			???
- *	@version		$Id$
+ *	@link			https://github.com/CeusMedia/WebServer
  */
+namespace CeusMedia\WebServer;
 /**
  *	HTTP Server.
- *	@category		cmModules
- *	@package		PAWS
+ *	@category		Library
+ *	@package		CeusMedia_WebServer
  *	@author			Christian Würker <christian.wuerker@ceus-media.de>
- *	@copyright		2010 Christian Würker
+ *	@copyright		2010-2015 Christian Würker
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
- *	@link			http://code.google.com/p/cmmodules/
- *	@since			???
- *	@version		$Id$
+ *	@link			https://github.com/CeusMedia/WebServer
  */
-class CMM_PAWS_Server extends Console_Fork_Abstract {
+class Server extends \Console_Fork_Abstract {
 
 	protected $config	= array();
 	protected $socket	= NULL;
@@ -54,7 +51,7 @@ class CMM_PAWS_Server extends Console_Fork_Abstract {
 		ini_set("max_execution_time", "0");
 		ini_set("max_input_time", "0");
 		set_time_limit(0);
-#		$this->parser	= new CMM_PAWS_Request_Parser($this->config);
+#		$this->parser	= new \CeusMedia\WebServer\Request\Parser($this->config);
 		echo 'Server is running...'."\n";
 		$this->main();
 	}
@@ -70,10 +67,10 @@ class CMM_PAWS_Server extends Console_Fork_Abstract {
 
 	protected function handleRequest($string) {
 #		$request	= $this->parser->parse($string);
-		$request	= new CMM_PAWS_Request($this->config);
+		$request	= new \CeusMedia\WebServer\Request($this->config);
 		$request->fromString($string);
-		$response	= new CMM_PAWS_Response();
-		$handler	= new CMM_PAWS_Method_Dispatcher($this->config);
+		$response	= new \CeusMedia\WebServer\Response();
+		$handler	= new \CeusMedia\WebServer\Method\Dispatcher($this->config);
 		$handler->dispatch($request, $response);
 		return $response->toString();
 	}
@@ -85,8 +82,8 @@ class CMM_PAWS_Server extends Console_Fork_Abstract {
 		if(!is_resource($connection))
 			return;
 		$msg = $error['message'].' in '.$error['file']. ' in line '.$error['line'];
-		$exception	= new CMM_PAWS_Exception($msg, 500);
-		$handler	= new CMM_PAWS_Exception_Handler($this->config);
+		$exception	= new \CeusMedia\WebServer\Exception($msg, 500);
+		$handler	= new \CeusMedia\WebServer\Exception_Handler($this->config);
 		$response	= $handler->handle($exception);
 		@fwrite($connection, $response);
 		@fclose($connection);
@@ -108,7 +105,7 @@ echo array_shift( explode( "\r\n", $request ) )."\n";
 			}
 		}
 	}
-	
+
 	protected function runInChild($arguments = array()) {
 		try {
 			try {
@@ -118,12 +115,12 @@ echo array_shift( explode( "\r\n", $request ) )."\n";
 				register_shutdown_function($callback, $connection);
 				$response	= $this->handleRequest($request);
 			}
-			catch(CMM_PAWS_Exception $exception) {
-				$handler	= new CMM_PAWS_Exception_Handler($this->config);
+			catch(\CeusMedia\WebServer\Exception $exception) {
+				$handler	= new \CeusMedia\WebServer\Exception\Handler($this->config);
 				$response	= $handler->handle($exception);
 			}
 		}
-		catch(Exception $e){
+		catch(\Exception $e){
 			die($e->getMessage()."\n");
 		}
 		fwrite($connection, $response);

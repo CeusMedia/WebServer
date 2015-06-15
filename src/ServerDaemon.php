@@ -2,7 +2,7 @@
 /**
  *	Daemon to run Server as a Service.
  *
- *	Copyright (c) 2010 Christian Würker (ceus-media.de)
+ *	Copyright (c) 2010-2015 Christian Würker (ceusmedia.de)
  *
  *	This program is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -17,35 +17,32 @@
  *	You should have received a copy of the GNU General Public License
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *	@category		cmModules
- *	@package		PAWS
+ *	@category		Library
+ *	@package		CeusMedia_WebServer
  *	@author			Christian Würker <christian.wuerker@ceus-media.de>
- *	@copyright		2010 Christian Würker
+ *	@copyright		2010-2015 Christian Würker
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
- *	@link			http://code.google.com/p/cmmodules/
- *	@since			???
- *	@version		$Id$
+ *	@link			https://github.com/CeusMedia/WebServer
  */
+namespace CeusMedia\WebServer;
 /**
  *	Daemon to run Server as a Service.
- *	@category		cmModules
- *	@package		PAWS
+ *	@category		Library
+ *	@package		CeusMedia_WebServer
  *	@author			Christian Würker <christian.wuerker@ceus-media.de>
- *	@copyright		2010 Christian Würker
+ *	@copyright		2010-2015 Christian Würker
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
- *	@link			http://code.google.com/p/cmmodules/
- *	@since			???
- *	@version		$Id$
+ *	@link			https://github.com/CeusMedia/WebServer
  */
-class CMM_PAWS_ServerDaemon
+class ServerDaemon
 {
 	public function __construct()
 	{
 		$pid = pcntl_fork();
 		if($pid == -1)
-			throw new RuntimeException('Could not fork');
+			throw new \RuntimeException('Could not fork');
 		if(!$pid)
-			new CMM_PAWS_Server;
+			new \CeusMedia\WebServer\Server;
 	}
 }
 ?>

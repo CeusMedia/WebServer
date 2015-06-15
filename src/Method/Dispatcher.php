@@ -2,7 +2,7 @@
 /**
  *	Dispatcher to run Handler for called HTTP Method.
  *
- *	Copyright (c) 2010 Christian Würker (ceus-media.de)
+ *	Copyright (c) 2010-2015 Christian Würker (ceusmedia.de)
  *
  *	This program is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -17,27 +17,24 @@
  *	You should have received a copy of the GNU General Public License
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *	@category		cmModules
- *	@package		PAWS.Method
+ *	@category		Library
+ *	@package		CeusMedia_WebServer_Method
  *	@author			Christian Würker <christian.wuerker@ceus-media.de>
- *	@copyright		2010 Christian Würker
+ *	@copyright		2010-2015 Christian Würker
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
- *	@link			http://code.google.com/p/cmmodules/
- *	@since			???
- *	@version		$Id$
+ *	@link			https://github.com/CeusMedia/WebServer
  */
+namespace CeusMedia\WebServer\Method;
 /**
  *	Dispatcher to run Handler for called HTTP Method.
- *	@category		cmModules
- *	@package		PAWS.Method
+ *	@category		Library
+ *	@package		CeusMedia_WebServer_Method
  *	@author			Christian Würker <christian.wuerker@ceus-media.de>
- *	@copyright		2010 Christian Würker
+ *	@copyright		2010-2015 Christian Würker
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
- *	@link			http://code.google.com/p/cmmodules/
- *	@since			???
- *	@version		$Id$
+ *	@link			https://github.com/CeusMedia/WebServer
  */
-class CMM_PAWS_Method_Dispatcher {
+class Dispatcher {
 
 	protected $config;
 	protected $methods	= array();
@@ -57,16 +54,16 @@ class CMM_PAWS_Method_Dispatcher {
 	/**
 	 *	Transports already set HTTP Headers to Response.
 	 *	@access		public
-	 *	@param		CMM_PAWS_Response	$response		HTTP Response Object
+	 *	@param		\CeusMedia\WebServer\Response	$response		HTTP Response Object
 	 *	@return		void
 	 */
-	protected function adoptSetHeadersToResponse(CMM_PAWS_Response $response) {
+	protected function adoptSetHeadersToResponse(\CeusMedia\WebServer\Response $response) {
 #		remark('adoption');
 		foreach(headers_list() as $header) {
 			$parts = explode(':', $header);
 			$key	= trim(array_shift($parts));
 			$value	= trim(array_shift(implode(':',$parts)));
-			$header	= new CMM_PAWS_Header($key, $value);
+			$header	= new \CeusMedia\WebServer\Header($key, $value);
 			$response->addHeader($header);
 #			remark('adopt: '.$key);
 		}
@@ -75,27 +72,27 @@ class CMM_PAWS_Method_Dispatcher {
 	/**
 	 *	Starts Handler Object for called HTTP Method, if supported and allowed.
 	 *	@access		public
-	 *	@param		CMM_PAWS_Request	$request		HTTP Request Object
-	 *	@param		CMM_PAWS_Response	$response		HTTP Response Object
+	 *	@param		\CeusMedia\WebServer\Request	$request		HTTP Request Object
+	 *	@param		\CeusMedia\WebServer\Response	$response		HTTP Response Object
 	 *	@return		void
 	 */
-	public function dispatch(CMM_PAWS_Request $request, CMM_PAWS_Response $response) {
+	public function dispatch(\CeusMedia\WebServer\Request $request, CMM_PAWS_Response $response) {
 		$method	= strtoupper(trim($request->getMethod()));
 
-		if(!in_array($method,$this->methods)){									// check called Method agains Configuration
-			$message	= 'HTTP Method "'.$method.'" is not supported';			// Method is not allowed
-			throw new CMM_PAWS_Exception($message, 405);								// quit with 405
+		if(!in_array($method,$this->methods)){														// check called Method agains Configuration
+			$message	= 'HTTP Method "'.$method.'" is not supported';								// Method is not allowed
+			throw new CMM_PAWS_Exception($message, 405);											// quit with 405
 		}
 
-		$methodName	= ucFirst(strtolower($method));								// Class File Name of Method
-		$className	= 'CMM_PAWS_Method_'.$methodName;							// Class Name of Method
+		$methodName	= ucFirst(strtolower($method));													// Class File Name of Method
+		$className	= '\\CeusMedia\\WebServer\\Method\\'.$methodName;								// Class Name of Method
 		$parameters	= array($this->config);
-		$handler	= Alg_Object_Factory::createObject($className, $parameters);// create Method Handler Object
-		$body		= $handler->handle($request, $response);					// handle Request
+		$handler	= \Alg_Object_Factory::createObject($className, $parameters);					// create Method Handler Object
+		$body		= $handler->handle($request, $response);										// handle Request
 
-		$this->adoptSetHeadersToResponse($response);							// transport inner set Headers to Response
-		if($body){																// generated Content is available
-			$response->setBody($body);											// set Content to Response Body
+		$this->adoptSetHeadersToResponse($response);												// transport inner set Headers to Response
+		if($body){																					// generated Content is available
+			$response->setBody($body);																// set Content to Response Body
 		}
 	}
 }
