@@ -33,8 +33,9 @@ namespace CeusMedia\WebServer;
  *	@copyright		2010-2015 Christian Würker
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/WebServer
+ *	@extends		\CLI_Fork_Abstract
  */
-abstract class MethodAbstract extends \Console_Fork_Abstract{
+abstract class MethodAbstract extends \CLI_Fork_Abstract{
 
 	protected $name	= 'UNKNOWN';
 
@@ -68,12 +69,27 @@ abstract class MethodAbstract extends \Console_Fork_Abstract{
 		}
 		if(file_exists($root.$path))
 			return $root.$path;
-		throw new \CeusMedia\WebServer\Exception('No resource found for URL "'.$path.'"', 404);
+		$e	= new \CeusMedia\WebServer\Exception('No resource found for URL "'.$path.'"', 404);
+		$e->setUri($path);
+		throw $e;
 	}
 
 	protected function setGet($request) {
 		$url	= $request->getUrl();
 		$query	= parse_url($url, PHP_URL_QUERY);
+		putenv("DOCUMENT_ROOT=".$this->config['docroot']);
+		$_SERVER['DOCUMENT_ROOT']			= $this->config['docroot'];
+		$_SERVER['PATH']					= $query;
+		$_SERVER['HTTP_REFERER']			= $request->getHeaderByKey('Referer')->getValue();
+		$_SERVER['HTTP_USER_AGENT']			= $request->getHeaderByKey('User-agent')->getValue();
+		$_SERVER['HTTP_ACCEPT']				= $request->getHeaderByKey('Accept')->getValue();
+		$_SERVER['HTTP_ACCEPT_ENCODING']	= $request->getHeaderByKey('Accept-encoding')->getValue();
+		$_SERVER['HTTP_ACCEPT_LANGUAGE']	= $request->getHeaderByKey('Accept-language')->getValue();
+//		$_SERVER['HTTP_HOST']				= $this->config['host'];
+//		$_SERVER['HTTP_PORT']				= $this->config['port'];
+		$hostAndPort	= explode(":", $request->getHeaderByKey('Host'));
+		$_SERVER['HTTP_HOST']				= $hostAndPort[0];
+		$_SERVER['HTTP_PORT']				= $hostAndPort[1];
 		parse_str($query, $_GET);
 		parse_str($query, $_REQUEST);
 	}
