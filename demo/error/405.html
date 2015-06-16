@@ -1,0 +1,37 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>HTTP Error</title>
+    <style>
+<%include(css/blueprint.reset.css)%>
+<%include(css/blueprint.typography.css)%>
+<%include(css/error.css)%>
+    </style>
+  </head>
+  <body id="errorPage">
+    <div id="errorPageContainer">
+      <h1>HTTP Error</h1>
+      <div id="errorTitleText">Error 405: Method not allowed</div>
+      <div id="errorShortDesc">
+        <p>
+          The method specified in the Request-Line is not allowed for the resource identified by the Request-URI.<br/>
+          For more information please see <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html">HTTP Status Codes</a>.<br/>
+          <br/>
+        </p>
+      </div>
+      <div id="errorLongDesc">
+        <p>
+          <dl>
+            <dt>Reason</dt>
+            <dd><%message%><dd>
+            <dt>Request URI</dt>
+            <dd><%?path%><dd>
+            <dt>Date</dt>
+            <dd><%date%><dd>
+          </dl>
+        </p>
+      </div>
+	</div>
+  </body>
+</html>

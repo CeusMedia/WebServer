@@ -1,0 +1,41 @@
+#errorPage {
+	text-align: left;
+	background: white;
+	padding: 3% 5%;
+	z-index: 9999;
+	background-color: #EFEFEF;
+	}
+#errorPageContainer {
+	padding: 5% 8%;
+	border: 1px solid gray;
+	-moz-border-radius: 1em;
+	background-color: #FFFFFF;
+	min-width: 300px;
+	}
+#errorTitle {
+	}
+#errorTitleText {
+	font-weight: bold;
+	font-size: 2em;
+	}
+#errorLongContent {
+	}
+#errorShortDesc p {
+	border-bottom:1px solid threedlightshadow;
+	font-size:130%;
+	overflow:auto;
+	padding-bottom:1em;
+	}
+#errorLongDesc {
+	-moz-padding-end:3em;
+	font-size:110%;
+	}
+#errorLongDesc p {
+	}
+#errorTryAgain {
+	margin-top: 1em;
+	}
+
+#errorLongDesc dl dd {
+	word-wrap: break-word;
+}

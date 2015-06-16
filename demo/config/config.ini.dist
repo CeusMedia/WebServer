@@ -1,0 +1,17 @@
+host		= 0.0.0.0
+port		= 8000
+docroot		= /home/kriss/Web/dev/0.7.0/HttpServer/test
+methods		= HEAD,GET,POST,PUT,DELETE
+
+index		= index.html,index.php
+executable	= "/\.(php|php5)$/i"
+hidden		=
+
+errorpages	= /home/kriss/Web/dev/0.7.0/HttpServer/error/
+log.access	= /home/kriss/Web/dev/0.7.0/HttpServer/log/access.log
+
+limit.url	= 1024
+max.time    = 10
+mime.file	= "config/mime.ini"
+
+verbose		= yes
