@@ -35,5 +35,24 @@ namespace CeusMedia\WebServer;
  *	@link			https://github.com/CeusMedia/WebServer
  */
 class Exception extends \Exception {
+
+    protected $request;
+    protected $uri;
+
+    public function getRequest() {
+        return $this->request;
+    }
+
+    public function getUri(){
+        return $this->uri;
+    }
+
+    public function setRequest(\CeusMedia\WebServer\Request $request) {
+        $this->request  = $request;
+    }
+
+    public function setUri($uri) {
+        $this->uri  = $uri;
+    }
 }
 ?>
