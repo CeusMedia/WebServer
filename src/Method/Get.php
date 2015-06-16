@@ -42,21 +42,34 @@ class Get extends \CeusMedia\WebServer\MethodAbstract {
 	/**
 	 *	Handles Request.
 	 *	@access		public
-	 *	@param		CMM_PAWS_Request		$request		HTTP Request Object
-	 *	@param		CMM_PAWS_Response	$response		HTTP Response Object
-	 *	@return <type>
+	 *	@param		\CeusMedia\WebServer\Request		$request		HTTP Request Object
+	 *	@param		\CeusMedia\WebServer\Response	$response		HTTP Response Object
+	 *	@return		string
 	 */
-	public function handle(CMM_PAWS_Request $request, CMM_PAWS_Response $response) {
+	public function handle(\CeusMedia\WebServer\Request $request, \CeusMedia\WebServer\Response $response) {
+		$response->addHeader(new \CeusMedia\WebServer\Header("Connection", "close"));				//
 		$this->logRequest($request);
 		$pathName	= $this->negotiatePath($request);
 		$fileName	= pathinfo($pathName, PATHINFO_BASENAME);
-		echo "file: ".$fileName."\n";
+//		echo " . get file: ".$fileName."\n";
 		$extension	= pathinfo($pathName, PATHINFO_EXTENSION);
 #		if(array_key_exists($extension, $this->mimeTypes))
 #			$response->addHeader('Content-type', $this->mimeTypes[$extension]);
 		if(preg_match($this->config['executable'], $fileName)) {
-			return $this->runPhpFile($pathName, $request);
+			return $this->runPhpFile($request, $response, $pathName);
 		}
+		if(is_dir($pathName)){
+			$handler	= new \CeusMedia\WebServer\Response\Index($this->config);
+			return $handler->handle($request, $response);
+		}
+//		$response->addHeader(new \CeusMedia\WebServer\Header("Modified-At", filemtime($pathName)));
+
+		$fileSize	= filesize($pathName);
+		$fileTime	= date("r", filemtime($pathName));												//  get file timestamp (RFC 2822)
+		$mimeType	= finfo_file(finfo_open(FILEINFO_MIME_TYPE), $pathName);						//  get mime type using mimetype extension
+		$response->addHeader(new \CeusMedia\WebServer\Header("Content-Type", $mimeType));			//  set mime type header
+		$response->addHeader(new \CeusMedia\WebServer\Header("Content-length",  $fileSize));		//  set content length header
+		$response->addHeader(new \CeusMedia\WebServer\Header("Last-Modified", $fileTime));			//  set content timestamp header
 		return file_get_contents($pathName);
 	}
 
@@ -72,24 +85,29 @@ class Get extends \CeusMedia\WebServer\MethodAbstract {
 		return $output;
 	}
 
+
 	/**
 	 *	Runs a PHP Script in forked Process.
 	 *	@access		public
+	 *	@param		\CeusMedia\WebServer\Request	$request		HTTP Request Object
+	 *	@param		\CeusMedia\WebServer\Response	$response		HTTP Response Object
 	 *	@param		string			$pathName		Working Path
-	 *	@param		CMM_PAWS_Request	$request		HTTP Request Object
 	 *	@return		string			Generated Content
 	 *	@throws		CMM_PAWS_Exception if PHP throws uncatched Exception
 	 */
-	protected function runPhpFile($pathName, $request) {
+	protected function runPhpFile($request, $response, $pathName) {
 		try {
+			$response->addHeader(new \CeusMedia\WebServer\Header("Cache-Control", "no-cache"));
 			return $this->fork($pathName, $request);
 		}
-		catch(Exception $e) {
+		catch(\Exception $e) {
 			$trace	= $e->getTraceAsString();
 			$msg	= $e->getMessage();
 			$file	= $e->getFile();
 			$line	= $e->getLine();
-			throw new CMM_PAWS_Exception($msg.' in '.$file.' in line '.$line, 500);
+			$e	= new \CeusMedia\WebServer\Exception($msg.' in '.$file.' in line '.$line, 500);
+			$e->setUri(parse_url($request->getUrl(), PHP_URL_PATH));
+			throw $e;
 		}
 	}
 }
