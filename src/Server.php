@@ -33,13 +33,15 @@ namespace CeusMedia\WebServer;
  *	@copyright		2010-2015 Christian Würker
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/WebServer
+ *	@extends		\CLI_Fork_Abstract {
  */
-class Server extends \Console_Fork_Abstract {
+class Server extends \CLI_Fork_Abstract {
 
 	protected $config	= array();
 	protected $socket	= NULL;
 	protected $osIsWin	= NULL;
 	protected $parser	= NULL;
+	protected $verbose	= FALSE;
 
 	public function __construct($configFile = 'config/config.ini') {
 		parent::__construct(FALSE);
@@ -47,12 +49,18 @@ class Server extends \Console_Fork_Abstract {
 			die("Configuration file is missing\n");
 		$this->config	= parse_ini_file($configFile);
 		$this->osIsWin	= strtoupper(substr(PHP_OS, 0, 3)) == 'WIN';
+		$this->verbose	= !empty($this->config['verbose']);
 
-		ini_set("max_execution_time", "0");
+		set_error_handler(array($this, 'handleError'));
+		error_reporting(E_ALL);
+
+		ini_set("max_execution_time", $this->config['max.time']);
 		ini_set("max_input_time", "0");
-		set_time_limit(0);
+		set_time_limit($this->config['max.time']);
 #		$this->parser	= new \CeusMedia\WebServer\Request\Parser($this->config);
-		echo 'Server is running...'."\n";
+		if ($this->verbose) {
+			echo 'Server is running...'."\n";
+		}
 		$this->main();
 	}
 
@@ -60,9 +68,16 @@ class Server extends \Console_Fork_Abstract {
 		$addr	= 'tcp://'.$this->config['host'].':'.$this->config['port'];
 		$socket = stream_socket_server($addr, $errorNumber, $errorMessage, STREAM_SERVER_BIND|STREAM_SERVER_LISTEN);
 		if(!$socket)
-			throw new RuntimeException($errorMessage, $errorNumber);
+			throw new \RuntimeException($errorMessage, $errorNumber);
 		stream_set_blocking( $socket, 0 );
 		return $socket;
+	}
+
+	public function handleError($errno, $errstr, $errfile, $errline, array $errcontext) {
+		if(0 === error_reporting()) {																//  error was suppressed with the @-operator
+			return FALSE;
+		}
+		throw new \ErrorException($errstr, 0, $errno, $errfile, $errline);
 	}
 
 	protected function handleRequest($string) {
@@ -83,7 +98,7 @@ class Server extends \Console_Fork_Abstract {
 			return;
 		$msg = $error['message'].' in '.$error['file']. ' in line '.$error['line'];
 		$exception	= new \CeusMedia\WebServer\Exception($msg, 500);
-		$handler	= new \CeusMedia\WebServer\Exception_Handler($this->config);
+		$handler	= new \CeusMedia\WebServer\Response\Error($this->config);
 		$response	= $handler->handle($exception);
 		@fwrite($connection, $response);
 		@fclose($connection);
@@ -95,7 +110,10 @@ class Server extends \Console_Fork_Abstract {
 			$connection	= @stream_socket_accept($socket);
 			if($connection){
 				$request	= @fread($connection, 65535);
-echo array_shift( explode( "\r\n", $request ) )."\n";
+				if ($this->verbose) {
+					$parts	= explode("\r\n", $request);
+					echo array_shift($parts).PHP_EOL;
+				}
 				if($request) {
 					if($this->osIsWin)
 						$this->runInChild(array($connection, $request));
@@ -116,7 +134,7 @@ echo array_shift( explode( "\r\n", $request ) )."\n";
 				$response	= $this->handleRequest($request);
 			}
 			catch(\CeusMedia\WebServer\Exception $exception) {
-				$handler	= new \CeusMedia\WebServer\Exception\Handler($this->config);
+				$handler	= new \CeusMedia\WebServer\Response\Error($this->config);
 				$response	= $handler->handle($exception);
 			}
 		}
@@ -125,8 +143,8 @@ echo array_shift( explode( "\r\n", $request ) )."\n";
 		}
 		fwrite($connection, $response);
 		fclose($connection);
-		if(!$this->osIsWin)
-			exit(0);
+//		if(!$this->osIsWin)
+//			exit(0);
 	}
 
 	protected function runInParent($arguments = array()) {

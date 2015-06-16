@@ -18,23 +18,23 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  *	@category		Library
- *	@package		CeusMedia_WebServer_Exception
+ *	@package		CeusMedia_WebServer_Response
  *	@author			Christian Würker <christian.wuerker@ceus-media.de>
  *	@copyright		2010-2015 Christian Würker
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/WebServer
  */
-namespace CeusMedia\WebServer\Exception;
+namespace CeusMedia\WebServer\Response;
 /**
  *	Handler for Exceptions thrown while handling Request.
  *	@category		Library
- *	@package		CeusMedia_WebServer_Exception
+ *	@package		CeusMedia_WebServer_Response
  *	@author			Christian Würker <christian.wuerker@ceus-media.de>
  *	@copyright		2010-2015 Christian Würker
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/WebServer
  */
-class Handler {
+class Error {
 
 	public function __construct($config) {
 		$this->config	 = $config;
@@ -53,17 +53,28 @@ class Handler {
 				break;
 		}
 
-		$pathName	= $path.$code.".html";
-		if(!file_exists($pathName))
+		$fileName	= $code.".html";
+		if(!file_exists($path.$fileName))
 			throw new \RuntimeException('Page for HTTP error "'.$code.'" not found');
 		$data	= array(
 			'type'		=> get_class($e),
 			'message'	=> nl2br($e->getMessage()),
 			'code'		=> $e->getCode(),
 			'date'		=> date('c'),
+			'path'		=> $e->getUri(),
 		);
-		$body	= \UI_Template::render($pathName, $data);
-		$response->setBody($body);
+		try {
+			$template	= new \CeusMedia\TemplateEngine\Template();
+			$template->setTemplatePath($path);
+			$template->addPlugin(new \CeusMedia\TemplateEngine\Plugin\Inclusion());
+			$body		= $template->renderFile($fileName, $data);
+//			$body	= \UI_Template::render($pathName, $data);
+			$response->setBody($body);
+		}
+		catch(\Exception $e) {
+			$response->setStatus(500);
+			$response->setBody('Internal Server Error');
+		}
 		return $response->toString();
 	}
 }
