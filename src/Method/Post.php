@@ -52,7 +52,7 @@ class Post extends \CeusMedia\WebServer\Method\Get {
 		return $output;
 	}
 
-	protected function setPost(CMM_PAWS_Request $request) {
+	protected function setPost(\CeusMedia\WebServer\Request $request) {
 		$parts	= $request->getParts();
 		if($parts) {
 			foreach($parts as $part) {

@@ -42,15 +42,19 @@ class Head extends \CeusMedia\WebServer\Method\Get {
 	/**
 	 *	Handles HEAD Request.
 	 *	@access		public
-	 *	@param		HttpRequest		$request		HTTP Request Object
-	 *	@param		HttpResponse	$response		HTTP Response Object
-	 *	@return <type>
+	 *	@param		\CeusMedia\WebServer\Request		$request		HTTP Request Object
+	 *	@param		\CeusMedia\WebServer\Response	$response		HTTP Response Object
+	 *	@return		string
 	 */
-	public function handle(HttpRequest $request, HttpResponse $response) {
+	public function handle(\CeusMedia\WebServer\Request $request, \CeusMedia\WebServer\Response $response) {
 		$content	= parent::handle($request, $response);
-		$header		= new HttpHeader('Content-length', strlen($content));
-		$response->addHeader($header);
-		return NULL;
+		$pathName	= $this->config['docroot'].parse_url($request->getUrl(), PHP_URL_PATH);
+		$fileTime	= date("r", filemtime($pathName));												//  get file timestamp (RFC 2822)
+		$mimeType	= finfo_file(finfo_open(FILEINFO_MIME_TYPE), $pathName);						//  get mime type using mimetype extension
+		$response->addHeader(new \CeusMedia\WebServer\Header("Content-Type", $mimeType));			//  set mime type header
+		$response->addHeader(new \CeusMedia\WebServer\Header("Content-length",  0));				//  set content length header
+		$response->addHeader(new \CeusMedia\WebServer\Header("Last-Modified", $fileTime));			//  set content timestamp header
+		return "";
 	}
 }
 ?>
