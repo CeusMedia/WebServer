@@ -17,7 +17,8 @@
     "jabber": "ceus-media@jabber.org"
   },
   "require": {
-    "ceus-media/common": ">=0.8.1"
+    "ceus-media/common": ">=0.8.1",
+    "ceus-media/template-engine": "dev-master"
   },
   "autoload": {
     "psr-4": {
