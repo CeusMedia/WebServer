@@ -58,17 +58,26 @@ class Request {
 		$lines	= explode("\n", $string);
 		$first	= array_shift($lines);
 		$parts	= explode(' ',$first);
-		if(count($parts) != 3)
-			throw new \CeusMedia\WebServer\Exception('Invalid HTTP header', 400);
+		if(count($parts) != 3) {
+			$e	= new \CeusMedia\WebServer\Exception('Invalid HTTP header', 400);
+			$e->setUri($path);
+			throw $e;
+		}
 
 		$method		= strtoupper(array_shift($parts));
-		if(!in_array($method, $this->methods))
-			throw new \CeusMedia\WebServer\Exception('Method "'.$method.'" is not available', 405);
+/*		if(!in_array($method, $this->methods)) {
+			$e	= new \CeusMedia\WebServer\Exception('Method "'.$method.'" is not available', 405);
+//			$e->setUri($path);
+			throw $e;
+		}*/
 		$this->setMethod($method);
 
 		$url		= trim(urldecode(array_shift($parts)));
-		if(strlen($url) > $this->config['limit.url'])
-			throw new \CeusMedia\WebServer\Exception('The URL is to long', 414);
+		if(strlen($url) > $this->config['limit.url']) {
+			$e	= new \CeusMedia\WebServer\Exception('The URL is to long', 414);
+			$e->setUri($url);
+			throw $e;
+		}
 		$this->setUrl($url);
 
 		$this->setProtocol(array_shift($parts));
