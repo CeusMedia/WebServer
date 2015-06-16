@@ -76,12 +76,14 @@ class Dispatcher {
 	 *	@param		\CeusMedia\WebServer\Response	$response		HTTP Response Object
 	 *	@return		void
 	 */
-	public function dispatch(\CeusMedia\WebServer\Request $request, CMM_PAWS_Response $response) {
+	public function dispatch(\CeusMedia\WebServer\Request $request, \CeusMedia\WebServer\Response $response) {
 		$method	= strtoupper(trim($request->getMethod()));
 
 		if(!in_array($method,$this->methods)){														// check called Method agains Configuration
 			$message	= 'HTTP Method "'.$method.'" is not supported';								// Method is not allowed
-			throw new CMM_PAWS_Exception($message, 405);											// quit with 405
+			$e			= new \CeusMedia\WebServer\Exception($message, 405);						// quit with 405
+			$e->setUri(parse_url($request->getUrl(), PHP_URL_PATH));
+			throw $e;
 		}
 
 		$methodName	= ucFirst(strtolower($method));													// Class File Name of Method
