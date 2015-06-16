@@ -48,6 +48,10 @@ class Header {
 			$this->fromString($key);
 	}
 
+	public function __toString() {
+		return $this->toString();
+	}
+
 	public function fromString($string) {
 		if(!substr_count($string, ':'))
 			return FALSE;
